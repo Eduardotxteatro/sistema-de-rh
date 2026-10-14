@@ -1,7 +1,9 @@
+
+ <!-- card padrão-->
 <app-page-card title="Gestão de Colaboradores" subtitle="Listagem integrada ao banco de dados Oracle"
     icon="pi pi-users">
 
-    <!-- Botões de ação no cabeçalho padronizado -->
+    <!-- Botões de ação no cabeçalho -->
     <div header-actions class="flex gap-2">
         <p-button label="Novo Colaborador" icon="pi pi-plus" styleClass="p-button-sm p-button-success">
         </p-button>
@@ -12,7 +14,7 @@
 
     <p-menu #menu [popup]="true" [model]="visibleItems"></p-menu>
 
-    <!-- A sua tabela p-table existente, protegida pelo card -->
+    <!-- Tabela -->
     <p-table 
         [columns]="typeColumns"
         [value]="dataEmployees" 
@@ -25,7 +27,7 @@
         responsiveLayout="scroll"
         styleClass="p-datatable-striped p-datatable-gridlines">
 
-        <!-- Receba as colunas pelo let-columns -->
+        <!-- colunas -->
         <ng-template pTemplate="header" let-columns>
             <tr>
             <th *ngFor="let col of columns" [pSortableColumn]="col.field" [style.width]="col.width">
@@ -37,7 +39,7 @@
             </tr>
         </ng-template>
 
-        <!-- No body, também pode usar let-columns para ficar dinâmico ou manter manual -->
+       
         <ng-template pTemplate="body" let-employee>
             <tr>
             <td>{{ employee.EMPLOYEE_ID }}</td>
