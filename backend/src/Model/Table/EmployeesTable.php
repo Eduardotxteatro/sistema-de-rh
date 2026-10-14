@@ -13,6 +13,7 @@ class EmployeesTable extends Table
         $this->setPrimaryKey('EMPLOYEE_ID');
     }
 
+    //validações dos campos da table
     public function validationDefault(\Cake\Validation\Validator $validator): \Cake\Validation\Validator
     {
         $validator
@@ -71,6 +72,7 @@ class EmployeesTable extends Table
         return $validator;
     }
 
+    //pega uma linha da table pelo id do funcionário
     public function getEmployeeById($employeeId)
     {
         return $this->find()
@@ -78,6 +80,7 @@ class EmployeesTable extends Table
             ->first();
     }
 
+    //pega todos os registros da table
     public function getAllEmployees()
     {
         $conn = $this->getConnection();
@@ -100,6 +103,7 @@ class EmployeesTable extends Table
         return $conn->execute($sql)->fetchAll('assoc');
     }
 
+    //paginação da listagem da table
     public function getPaginated(array $params): array
     {
         $conn = $this->getConnection();
@@ -117,11 +121,11 @@ class EmployeesTable extends Table
             ? $params['orderField'] 
             : 'EMPLOYEE_ID';
 
-        // 1. Total de registros no HR.EMPLOYEES
+        // tot de registros na table HR.EMPLOYEES
         $totalResult = $conn->execute("SELECT COUNT(*) AS total FROM HR.EMPLOYEES")->fetch('assoc');
         $totalRecords = (int)($totalResult['TOTAL'] ?? $totalResult['total'] ?? 0);
 
-        // 2. Query paginada
+        // query paginada
         $sql = "
             SELECT e.EMPLOYEE_ID, 
                    e.FIRST_NAME, 
@@ -150,6 +154,7 @@ class EmployeesTable extends Table
         ];
     }
 
+    //método para deletar um funcionário
     public function deleteEmployeeById(int $employeeId): int
     {
         
@@ -163,7 +168,7 @@ class EmployeesTable extends Table
         error_log("[DEBUG SQL] Executando query para o ID: " . $employeeId);
 
         $statement = $conn->execute($sql, [
-            'employeeid' => $employeeId
+            'employeeId' => $employeeId
         ]);
 
         return $statement->rowCount();

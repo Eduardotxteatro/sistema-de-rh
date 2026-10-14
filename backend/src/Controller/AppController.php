@@ -63,7 +63,7 @@ class AppController extends Controller
         parent::beforeFilter($event);
 
         $origin = $this->request->getHeaderLine('Origin');
-        $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201'];
+        $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201']; //permissão de requests das urls
 
         if (in_array($origin, $allowedOrigins, true)) {
             $this->response = $this->response
@@ -81,45 +81,45 @@ class AppController extends Controller
     }
 
     public function restResponse(string $status = ResponseCodes::OK, string $message = '', mixed $payload = ''): ResponseCodes 
-{
-    $this->autoRender = false;
+    {
+        $this->autoRender = false;
 
-    if ($status !== ResponseCodes::OK && $status !== ResponseCodes::WARN) {
-        $logPayload = $this->sanitizePayloadForLog($payload);
-        $this->log(
-            sprintf(
-                '[API Error %s] %s %s - %s | Payload: %s',
-                $status,
-                $this->request ? $this->request->getMethod() : 'UNKNOWN',
-                $this->request ? $this->request->getRequestTarget() : 'UNKNOWN',
-                $message,
-                $logPayload
-            ),
-            'error'
-        );
+        if ($status !== ResponseCodes::OK && $status !== ResponseCodes::WARN) {
+            $logPayload = $this->sanitizePayloadForLog($payload);
+            $this->log(
+                sprintf(
+                    '[API Error %s] %s %s - %s | Payload: %s',
+                    $status,
+                    $this->request ? $this->request->getMethod() : 'UNKNOWN',
+                    $this->request ? $this->request->getRequestTarget() : 'UNKNOWN',
+                    $message,
+                    $logPayload
+                ),
+                'error'
+            );
+        }
+
+        $response = ['status' => $status, 'message' => $message, 'payload' => $payload];
+
+        $origin = $this->request->getHeaderLine('Origin');
+        $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201'];
+
+        $res = $this->response
+            ->withType('application/json')
+            ->withStringBody((string)json_encode($response));
+
+        if (in_array($origin, $allowedOrigins, true)) {
+            $res = $res
+                ->withHeader('Access-Control-Allow-Origin', $origin)
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept')
+                ->withHeader('Access-Control-Allow-Credentials', 'true')
+                ->withHeader('Vary', 'Origin');
+        }
+
+        $this->response = $res;
+        return $this->res;
     }
-
-    $response = ['status' => $status, 'message' => $message, 'payload' => $payload];
-
-    $origin = $this->request->getHeaderLine('Origin');
-    $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201'];
-
-    $res = $this->response
-        ->withType('application/json')
-        ->withStringBody((string)json_encode($response));
-
-    if (in_array($origin, $allowedOrigins, true)) {
-        $res = $res
-            ->withHeader('Access-Control-Allow-Origin', $origin)
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept')
-            ->withHeader('Access-Control-Allow-Credentials', 'true')
-            ->withHeader('Vary', 'Origin');
-    }
-
-    $this->response = $res;
-    return $this->$response;
-}
 
     /**
      * Sanitiza o payload para escrita em logs, truncando strings longas (ex: imagens base64)

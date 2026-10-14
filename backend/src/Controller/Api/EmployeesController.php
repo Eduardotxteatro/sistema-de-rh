@@ -13,13 +13,17 @@ class EmployeesController extends AppController
     {
         parent::initialize();
 
-        // Carrega o seu componente EmployeesComponents
+        // carregamento do componente EmployeesComponents
         $this->loadComponent('Employees');
+
+        //carregamento da table para litagem e delete
+        $table = $this->getTableLocator()->get('Employees');
+        $this->employeeTable = $table;
     }
 
     public function getAllEmployees(): Response
     {
-        $this->request->allowMethod(['get']);
+        $this->request->allowMethod(['get']); //permite a action get
 
         $requestData = $this->request->getQueryParams();
 
@@ -27,11 +31,10 @@ class EmployeesController extends AppController
             $requestData['filters'] = json_decode($requestData['filters'], true) ?? [];
         }
 
-        // Extrai parâmetros com o Component
+       
         $params = $this->Employees->extractListRequest($requestData);
 
-        // 1. Obtém a Table compatível com CakePHP 4.1
-        /** @var \App\Model\Table\EmployeesTable $employeesTable */
+        
         $employeesTable = $this->getTableLocator()->get('Employees');
         
         $result = $employeesTable->getPaginated($params);
@@ -71,7 +74,7 @@ class EmployeesController extends AppController
     {
         $this->autoRender = false;
 
-        // Se for preflight OPTIONS, responde 200 de imediato
+        
         if ($this->request->is('options')) {
             return $this->restResponse(ResponseCodes::OK, 'OK', null);
         }
