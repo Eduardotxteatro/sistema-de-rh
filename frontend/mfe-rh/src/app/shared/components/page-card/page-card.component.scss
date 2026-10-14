@@ -1,0 +1,48 @@
+.page-container {
+  padding: 1.5rem;
+  background-color: #f4f6f9;
+  min-height: calc(100vh - 60px);//Container da página com padding e cor de fundo
+
+  ::ng-deep .custom-page-card {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(14, 14, 14, 0.05);
+
+    .p-card-body {
+      padding: 1.5rem;
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  .card-header-bar {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, #1f2d3d, #2c3e50);
+    color: #ffffff;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+    .header-icon {
+      font-size: 1.6rem;
+      color: #3b82f6; // Azul de destaque
+    }
+
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+  }
+
+  .card-body-content {
+    margin-top: 0.5rem;
+  }
+}

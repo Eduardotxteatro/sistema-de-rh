@@ -1,0 +1,28 @@
+<router-outlet></router-outlet>
+<div class="layout-container">
+  <!-- Menu Lateral -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Painel Corporativo</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a routerLink="/employees" routerLinkActive="active-link">
+            <span>👤</span> Employees
+          </a>
+        </li>
+        <li>
+          <a routerLink="/countries" routerLinkActive="active-link">
+            <span>🌍</span> Countries
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Área de exibição dos componentes de acordo com a rota -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
