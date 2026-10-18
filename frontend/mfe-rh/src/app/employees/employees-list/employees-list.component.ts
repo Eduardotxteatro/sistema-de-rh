@@ -3,7 +3,9 @@ import { ConfirmationService, LazyLoadEvent, MenuItem, MessageService } from 'pr
 import { EmployeeService } from '../services/employee.service';
 import { tap } from 'rxjs/internal/operators/tap';
 import { catchError } from 'rxjs/internal/operators/catchError';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { of } from 'rxjs';
+import { EmployeesFormDialogComponent } from '../employees-form-dialog/employees-form-dialog.component';
 
 @Component({
   selector: 'app-employees-list',
@@ -20,8 +22,10 @@ export class EmployeesListComponent implements OnInit {
   visibleItems: MenuItem[] = [];
   isLoading: boolean = false;
   lastLazy: any;
+  modalRef!: DynamicDialogRef;
 
   constructor(
+    private dialogService: DialogService,
     private employeesService: EmployeeService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
@@ -90,6 +94,34 @@ export class EmployeesListComponent implements OnInit {
       .subscribe(() => {
         this.isLoading = false;
       });
+  }
+
+  createEmployee(){
+    this.modalRef = this.dialogService.open(EmployeesFormDialogComponent, {
+      data: { type: "add"},
+      header: "Adicionar novo funcionário",
+      width: "50%",
+      height: "60%"
+    });
+    this.modalRef.onClose.subscribe((result: any)=>{
+      if(result && (result.status === '0000' || result.status === 200 || result === true)){
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Novo funcionário',
+          detail: 'Funcionário adicionado com sucesso!'
+        });
+        this.getEmployeesList(this.lastLazy);
+      }
+    })
+  }
+
+  options(): any{
+    return{
+      icon: "pi pi-plus",
+      actionType: "button",
+      callback: ()=>this.createEmployee(),
+      visible: true,
+    };
   }
 
   editEmployee(selectedItem: any){

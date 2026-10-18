@@ -35,6 +35,12 @@ private apiUrl = 'http://localhost:8765/api/employees/get-all-employees.json';
     return this.http.get<any>(this.apiUrl, { params });
   }
 
+  createEmplyee(employee: any){
+    const url = '/api/employees/create_employee.json'
+    return this.http.post<any>(this.apiUrl, url);
+
+  }
+
   deleteEmployee(employeeId: number): Observable<any> {
       const url = `/api/employees/${employeeId}`;
       return this.http.delete<any>(url);

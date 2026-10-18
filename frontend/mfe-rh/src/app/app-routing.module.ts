@@ -4,10 +4,10 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'employees',   
-    loadChildren: () => import('./employees/employees-routing.module').then(m => m.EmployeesRoutingModule)
+    loadChildren: () => import('./employees/employees.module').then(m => m.EmployeesModule)
   },
   { path: 'countries',
-    loadChildren: () => import('./countries/countries-routing.module').then(m => m.CountriesRoutingModule)
+    loadChildren: () => import('./countries/countries.module').then(m => m.CountriesModule)
   },
   { path: '', redirectTo: 'employees', pathMatch: 'full' },
   { path: '**', redirectTo: 'employees', pathMatch: 'full' }

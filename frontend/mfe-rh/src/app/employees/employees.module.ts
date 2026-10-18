@@ -8,17 +8,22 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
-
-import { ConfirmationService, MessageService } from 'primeng/api';
-
 import { SharedModule } from '../shared/shared.module';
 import { EmployeesRoutingModule } from './employees-routing.module';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
+
+
 import { EmployeesListComponent } from './employees-list/employees-list.component';
+import { EmployeesFormDialogComponent } from './employees-form-dialog/employees-form-dialog.component';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
   declarations: [
-    EmployeesListComponent
+    EmployeesListComponent,
+    EmployeesFormDialogComponent
   ],
   imports: [
     CommonModule,
@@ -29,11 +34,15 @@ import { EmployeesListComponent } from './employees-list/employees-list.componen
     ConfirmDialogModule,
     ToastModule,
     SharedModule,
-    MenuModule
-  ],
+    MenuModule,
+    DynamicDialogModule,
+    ReactiveFormsModule,
+    InputTextModule
+],
   providers: [
     ConfirmationService,
-    MessageService
+    MessageService,
+    DialogService
   ]
 })
 export class EmployeesModule { }

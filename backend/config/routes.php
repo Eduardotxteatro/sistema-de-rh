@@ -21,6 +21,12 @@ return static function (RouteBuilder $routes): void {
             'action' => 'getAllEmployees',
         ]);
 
+        $builder->post('/employees/create-employee', [
+            'controller' => 'Employees',
+            'action' => 'createEmployee',
+        ])
+        ->setMethods(['POST']);
+
         // 2. DELETE /api/employees/{id} -> Mapeia o {id} diretamente para o argumento da action
         $builder->connect('/employees/{id}', [
             'controller' => 'Employees',

@@ -1,0 +1,155 @@
+<div class="p-4">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <!-- gap-4 cria espaço vertical e horizontal entre as colunas -->
+        <div class="grid gap-y-4">
+
+            <!-- Primeiro Nome -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="FIRST_NAME"
+                        type="text"
+                        pInputText
+                        class="w-full"
+                        formControlName="FIRST_NAME"
+                        maxlength="20" />
+                    <label for="FIRST_NAME">Nome*</label>
+                </span>
+            </div>
+
+            <!-- Segundo Nome -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="LAST_NAME"
+                        type="text"
+                        pInputText
+                        class="w-full"
+                        formControlName="LAST_NAME"
+                        maxlength="25" />
+                    <label for="LAST_NAME">Segundo nome*</label>
+                </span>
+            </div>
+
+            <!-- E-mail -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="EMAIL"
+                        type="email"
+                        pInputText
+                        class="w-full"
+                        formControlName="EMAIL"
+                        maxlength="50" />
+                    <label for="EMAIL">E-mail*</label>
+                </span>
+            </div>
+
+            <!-- Telefone -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="PHONE_NUMBER"
+                        type="tel"
+                        pInputText
+                        class="w-full"
+                        formControlName="PHONE_NUMBER"
+                        maxlength="25" />
+                    <label for="PHONE_NUMBER">Telefone*</label>
+                </span>
+            </div>
+
+            <!-- Data de Contratação -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="HIRE_DATE"
+                        type="date"
+                        pInputText
+                        class="w-full"
+                        formControlName="HIRE_DATE" />
+                    <label for="HIRE_DATE"></label>
+                </span>
+            </div>
+
+            <!-- Código de Trabalho -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="JOB_ID"
+                        type="text"
+                        pInputText
+                        class="w-full"
+                        formControlName="JOB_ID"
+                        maxlength="10" />
+                    <label for="JOB_ID">Código de trabalho*</label>
+                </span>
+            </div>
+
+            <!-- Salário -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="SALARY"
+                        type="number"
+                        pInputText
+                        class="w-full"
+                        formControlName="SALARY"
+                        step="0.01" />
+                    <label for="SALARY">Salário</label>
+                </span>
+            </div>
+
+            <!-- Percentual de Comissão -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="COMMISSION_PCT"
+                        type="number"
+                        pInputText
+                        class="w-full"
+                        formControlName="COMMISSION_PCT"
+                        step="0.01" />
+                    <label for="COMMISSION_PCT">Comissão (%)</label>
+                </span>
+            </div>
+
+            <!-- Código de Gerência -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="MANAGER_ID"
+                        type="number"
+                        pInputText
+                        class="w-full"
+                        formControlName="MANAGER_ID" />
+                    <label for="MANAGER_ID">Código de Gerência</label>
+                </span>
+            </div>
+
+            <!-- Código de Departamento -->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label">
+                    <input 
+                        id="DEPARTMENT_ID"
+                        type="number"
+                        pInputText
+                        class="w-full"
+                        formControlName="DEPARTMENT_ID" />
+                    <label for="DEPARTMENT_ID">Código de Departamento</label>
+                </span>
+            </div>          
+
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-content-end mt-4">
+            <button type="submit" 
+                pButton 
+                icon="pi pi-check" 
+                label="Submeter" 
+                class="w-full p-button-success">
+            </button>
+        </div>
+    </form>
+</div>
