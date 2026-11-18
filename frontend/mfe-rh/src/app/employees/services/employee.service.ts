@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -8,36 +8,38 @@ import { Observable } from 'rxjs';
 
 export class EmployeeService {
 
-  private http = inject(HttpClient);
+  headers = HttpHeaders;
 
-private apiUrl = 'http://localhost:8765/api/employees/get-all-employees.json';
-  constructor() { }
+  //private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8765';
+  constructor(private http: HttpClient) { }
 
-  getEmployees(rawParams?: Record<string, any>): Observable<any> {
-    let params = new HttpParams();
+  getEmployees(params: {
+    offset: number;
+    limit: number;
+    order?: string;
+    direction: string;
+    filters?: { field?: string | null; value?: unknown };
+  }): Observable<any> {
+    let query = new HttpParams()
+      .set('offset', params.offset)
+      .set('limit', params.limit)
+      .set('direction', params.direction);
 
-    if (rawParams) {
-      Object.keys(rawParams).forEach((key) => {
-        const val = rawParams[key];
-
-        // Ignora valores nulos ou undefined
-        if (val !== undefined && val !== null) {
-          // Se for objeto/array (como filters), serializa para JSON
-          if (typeof val === 'object') {
-            params = params.set(key, JSON.stringify(val));
-          } else {
-            params = params.set(key, String(val));
-          }
-        }
-      });
+    if (params.order) {
+      query = query.set('order', params.order);
+    }
+    if (params.filters?.field) {
+      query = query.set('filters', JSON.stringify(params.filters));
     }
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get(`${this.apiUrl}/api/employees/get-all-employees.json`, { params: query });
   }
 
-  createEmplyee(employee: any){
-    const url = '/api/employees/create_employee.json'
-    return this.http.post<any>(this.apiUrl, url);
+  createEmployee(employee: any){
+    
+    const endpoint = `${this.apiUrl}/api/employees/create-employee.json`;
+    return this.http.post<any>(endpoint, employee);
 
   }
 

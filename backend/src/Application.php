@@ -37,49 +37,83 @@ class Application extends BaseApplication
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue
-            // 1. ErrorHandler deve vir em primeiro lugar
-            ->add(new ErrorHandlerMiddleware(Configure::read('Error')))
 
-            // 2. Middleware de CORS
-            ->add(function (ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+            // 1. CORS Middleware
+            ->add(function (
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
+
                 $origin = $request->getHeaderLine('Origin');
-                $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201'];
-                $isAllowed = in_array($origin, $allowedOrigins, true);
 
-                // Pré-validação OPTIONS (Preflight)
-                if ($request->getMethod() === 'OPTIONS') {
-                    $response = new \Cake\Http\Response();
-                    if ($isAllowed) {
-                        $response = $response
-                            ->withHeader('Access-Control-Allow-Origin', $origin)
-                            ->withHeader('Vary', 'Origin')
-                            ->withHeader('Access-Control-Allow-Credentials', 'true');
-                    }
-                    return $response
-                        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept')
-                        ->withHeader('Access-Control-Max-Age', '86400')
-                        ->withStatus(200);
+                $allowedOrigins = [
+                    'http://localhost:4200',
+                    'http://localhost:4201',
+                    'http://127.0.0.1:4200',
+                    'http://127.0.0.1:4201',
+                ];
+
+                $isAllowedOrigin = in_array(
+                    $origin,
+                    $allowedOrigins,
+                    true
+                );
+
+                // Preflight
+                if (
+                    $request->getMethod() === 'OPTIONS' &&
+                    $request->hasHeader('Access-Control-Request-Method')
+                ) {
+                    $response = new \Cake\Http\Response([
+                        'status' => $isAllowedOrigin ? 204 : 403
+                    ]);
+                } else {
+                    $response = $handler->handle($request);
                 }
 
-                // Executa a requisição real
-                $response = $handler->handle($request);
+                $response = $response->withAddedHeader('Vary', 'Origin');
 
-                if ($isAllowed) {
-                    $response = $response
-                        ->withHeader('Access-Control-Allow-Origin', $origin)
-                        ->withHeader('Vary', 'Origin')
-                        ->withHeader('Access-Control-Allow-Credentials', 'true');
+                if (!$isAllowedOrigin) {
+                    return $response;
                 }
 
-                return $response;
+                return $response
+                    ->withHeader(
+                        'Access-Control-Allow-Origin',
+                        $origin
+                    )
+                    ->withHeader(
+                        'Access-Control-Allow-Credentials',
+                        'true'
+                    )
+                    ->withHeader(
+                        'Access-Control-Allow-Methods',
+                        'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+                    )
+                    ->withHeader(
+                        'Access-Control-Allow-Headers',
+                        'X-Requested-With, Content-Type, Authorization, Origin, Accept'
+                    )
+                    ->withHeader(
+                        'Access-Control-Max-Age',
+                        '86400'
+                    );
             })
 
-            // 3. Middlewares restantes
+            // 2. ErrorHandler depois do CORS
+            ->add(new ErrorHandlerMiddleware(
+                Configure::read('Error')
+            ))
+
+            // 3. Asset Middleware
             ->add(new AssetMiddleware([
                 'cacheTime' => Configure::read('Asset.cacheTime'),
             ]))
+
+            // 4. Routing Middleware
             ->add(new RoutingMiddleware($this))
+
+            // 5. BodyParser Middleware
             ->add(new BodyParserMiddleware());
 
         return $middlewareQueue;

@@ -4,11 +4,14 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
+use App\Model\Table\EmployeesTable;
 use Cake\Http\Response;
 use App\Config\ResponseCodes;
 
 class EmployeesController extends AppController
 {
+    private EmployeesTable $employeeTable;
+
     public function initialize(): void
     {
         parent::initialize();
@@ -17,8 +20,7 @@ class EmployeesController extends AppController
         $this->loadComponent('Employees');
 
         //carregamento da table para litagem e delete
-        $table = $this->getTableLocator()->get('Employees');
-        $this->employeeTable = $table;
+        $this->employeeTable = $this->getTableLocator()->get('Employees');
     }
 
     public function getAllEmployees(): Response
@@ -68,6 +70,24 @@ class EmployeesController extends AppController
         return $this->response
             ->withType('application/json')
             ->withStringBody((string)json_encode($payload));
+    }
+
+    public function createEmployee(): Response
+    {
+        $this->request->allowMethod(['post', 'options']);
+
+        try {
+            $payload = $this->request->getData('data') ?? $this->request->getData();
+            $data = $this->Employees->normalizeInput(array_change_key_case($payload, CASE_LOWER));
+            $this->employeeTable->createEmployee($data);
+
+            return $this->restResponse(ResponseCodes::OK, 'Funcionário criado com sucesso!', null);
+        } catch (\Throwable $exception) {
+            $this->log($exception->getMessage(), 'error');
+
+            return $this->restResponse(ResponseCodes::DB_ERROR, 'Não foi possível cadastrar o funcionário.', null)
+                ->withStatus(500);
+        }
     }
 
     public function deleteEmployee($id = null)

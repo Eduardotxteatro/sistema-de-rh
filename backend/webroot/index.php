@@ -22,6 +22,10 @@ error_log(sprintf(
     $_SERVER['HTTP_ORIGIN'] ?? 'Sem Origin'
 ));
 
+// Keep native PHP errors out of HTTP responses, including during bootstrap.
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
 // Check platform requirements
 require dirname(__DIR__) . '/config/requirements.php';
 

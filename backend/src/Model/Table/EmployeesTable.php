@@ -154,6 +154,57 @@ class EmployeesTable extends Table
         ];
     }
 
+    //método para inserir um funcionário na table
+    public function createEmployee(array $data){
+        
+        $conn = $this->getConnection();
+
+        $sql = "
+            INSERT INTO HR.EMPLOYEES (
+                EMPLOYEE_ID, 
+                FIRST_NAME, 
+                LAST_NAME, 
+                EMAIL, 
+                PHONE_NUMBER, 
+                HIRE_DATE, 
+                JOB_ID, 
+                SALARY, 
+                COMMISSION_PCT, 
+                MANAGER_ID, 
+                DEPARTMENT_ID
+            )VALUES(
+                HR.EMPLOYEES_SEQ.NEXTVAL,
+                :FIRST_NAME, 
+                :LAST_NAME, 
+                :EMAIL, 
+                :PHONE_NUMBER, 
+                TO_DATE(:HIRE_DATE, 'YYYY-MM-DD'),
+                :JOB_ID, 
+                :SALARY, 
+                :COMMISSION_PCT, 
+                :MANAGER_ID, 
+                :DEPARTMENT_ID
+            )
+        ";
+
+        //Mapeamento explicitamente os parâmetros com bind
+        $params = [
+            'FIRST_NAME'       => $data['FIRST_NAME'] ?? null,
+            'LAST_NAME'        => $data['LAST_NAME'] ?? null,
+            'EMAIL'            => $data['EMAIL'] ??  null,
+            'PHONE_NUMBER'     => $data['PHONE_NUMBER'] ?? null,
+            'HIRE_DATE'        => !empty($data['HIRE_DATE']) ? substr($data['HIRE_DATE'], 0, 10) : null,
+            'JOB_ID'           => $data['JOB_ID'] ?? null,
+            'SALARY'           => !empty($data['SALARY']) ? (float)$data['SALARY'] : null,
+            'COMMISSION_PCT'   => !empty($data['COMMISSION_PCT']) ? (float)$data['COMMISSION_PCT'] : null,
+            'MANAGER_ID'       => !empty($data['MANAGER_ID']) ? (int)$data['MANAGER_ID'] : null,
+            'DEPARTMENT_ID'    => !empty($data['DEPARTMENT_ID']) ? (int)$data['DEPARTMENT_ID'] : null,
+        ];
+
+        return $conn->execute($sql, $params);
+
+    }
+
     //método para deletar um funcionário
     public function deleteEmployeeById(int $employeeId): int
     {

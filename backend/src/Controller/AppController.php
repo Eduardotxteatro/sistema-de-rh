@@ -18,6 +18,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use App\Config\ResponseCodes;
+use Cake\Http\Response;
 
 /**
  * Application Controller
@@ -45,12 +46,6 @@ class AppController extends Controller
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
 
-        //Libera chamadas do frontend Angular
-        $this->response = $this->response
-            ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
@@ -62,25 +57,13 @@ class AppController extends Controller
     {
         parent::beforeFilter($event);
 
-        $origin = $this->request->getHeaderLine('Origin');
-        $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201']; //permissão de requests das urls
-
-        if (in_array($origin, $allowedOrigins, true)) {
-            $this->response = $this->response
-                ->withHeader('Access-Control-Allow-Origin', $origin)
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept')
-                ->withHeader('Access-Control-Allow-Credentials', 'true')
-                ->withHeader('Vary', 'Origin');
-        }
-
         // Se o browser enviar OPTIONS antes do DELETE, responde logo aqui com 200
         if ($this->request->is('options')) {
             return $this->response->withStatus(200);
         }
     }
 
-    public function restResponse(string $status = ResponseCodes::OK, string $message = '', mixed $payload = ''): ResponseCodes 
+    public function restResponse(string $status = ResponseCodes::OK, string $message = '', mixed $payload = ''): Response
     {
         $this->autoRender = false;
 
@@ -101,24 +84,9 @@ class AppController extends Controller
 
         $response = ['status' => $status, 'message' => $message, 'payload' => $payload];
 
-        $origin = $this->request->getHeaderLine('Origin');
-        $allowedOrigins = ['http://localhost:4200', 'http://localhost:4201'];
-
-        $res = $this->response
+        return $this->response
             ->withType('application/json')
             ->withStringBody((string)json_encode($response));
-
-        if (in_array($origin, $allowedOrigins, true)) {
-            $res = $res
-                ->withHeader('Access-Control-Allow-Origin', $origin)
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept')
-                ->withHeader('Access-Control-Allow-Credentials', 'true')
-                ->withHeader('Vary', 'Origin');
-        }
-
-        $this->response = $res;
-        return $this->res;
     }
 
     /**
